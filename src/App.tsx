@@ -10,26 +10,20 @@ export default function Page() {
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-
-    const tryPlay = () => {
-      audio.play().catch(() => {
-        // Autoplay can be blocked; rely on user interaction to start.
-      });
-    };
-
-    tryPlay();
-    const onInteract = () => tryPlay();
-
-    window.addEventListener("pointerdown", onInteract, { once: true });
-    window.addEventListener("touchstart", onInteract, { once: true });
-    window.addEventListener("keydown", onInteract, { once: true });
-
-    return () => {
-      window.removeEventListener("pointerdown", onInteract);
-      window.removeEventListener("touchstart", onInteract);
-      window.removeEventListener("keydown", onInteract);
-    };
+    // Hint the browser to buffer audio during page load.
+    audio.load();
   }, []);
+
+  const handleYesClick = () => {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.currentTime = 0;
+      audio.play().catch(() => {
+        // If the browser blocks, user can tap again.
+      });
+    }
+    setYesPressed(true);
+  };
 
   const handleNoClick = () => {
     setNoCount(noCount + 1);
@@ -60,7 +54,7 @@ export default function Page() {
 
   return (
     <div className="-mt-16 flex h-screen flex-col items-center justify-center">
-      <audio ref={audioRef} src="/music.mp3" autoPlay loop playsInline preload="auto" />
+      <audio ref={audioRef} src="/music.mp3" loop playsInline preload="auto" />
       {yesPressed ? (
         <>
           <img src="https://media.tenor.com/gUiu1zyxfzYAAAAi/bear-kiss-bear-kisses.gif" />
@@ -79,7 +73,7 @@ export default function Page() {
             <button
               className={`mr-4 rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700`}
               style={{ fontSize: yesButtonSize }}
-              onClick={() => setYesPressed(true)}
+              onClick={handleYesClick}
             >
               Yes
             </button>

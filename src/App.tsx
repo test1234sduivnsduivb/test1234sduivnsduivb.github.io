@@ -1,10 +1,35 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function Page() {
   const [noCount, setNoCount] = useState(0);
   const [yesPressed, setYesPressed] = useState(false);
   const yesButtonSize = noCount * 20 + 16;
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const tryPlay = () => {
+      audio.play().catch(() => {
+        // Autoplay can be blocked; rely on user interaction to start.
+      });
+    };
+
+    tryPlay();
+    const onInteract = () => tryPlay();
+
+    window.addEventListener("pointerdown", onInteract, { once: true });
+    window.addEventListener("touchstart", onInteract, { once: true });
+    window.addEventListener("keydown", onInteract, { once: true });
+
+    return () => {
+      window.removeEventListener("pointerdown", onInteract);
+      window.removeEventListener("touchstart", onInteract);
+      window.removeEventListener("keydown", onInteract);
+    };
+  }, []);
 
   const handleNoClick = () => {
     setNoCount(noCount + 1);
@@ -35,6 +60,7 @@ export default function Page() {
 
   return (
     <div className="-mt-16 flex h-screen flex-col items-center justify-center">
+      <audio ref={audioRef} src="/music.mp3" autoPlay loop playsInline preload="auto" />
       {yesPressed ? (
         <>
           <img src="https://media.tenor.com/gUiu1zyxfzYAAAAi/bear-kiss-bear-kisses.gif" />

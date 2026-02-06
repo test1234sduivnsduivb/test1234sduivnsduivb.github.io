@@ -15,7 +15,7 @@ Click on the template of your choice, and create your valentine pages under 1 mi
 
 
 # Demo
-Github Pages : https://saurabhnemade.github.io/will-you-be-my-valentine/
+Live site: https://mykitty.otojon.com
 
 
 # Description
@@ -36,9 +36,15 @@ pnpm run dev
 ![image description](demo.gif)
 
 
-# How to deploy it
+# How to deploy it (GitHub Pages from main)
+1) Build the site (outputs to `docs/`)
 ```
-pnpm run deploy
+pnpm run build
 ```
+2) Commit and push the `docs/` folder to `main`
+3) In GitHub Settings → Pages:
+   - Source: `main`
+   - Folder: `/docs`
+   - Custom domain: `mykitty.otojon.com`
 
 Made with ❤️ in Berlin!
